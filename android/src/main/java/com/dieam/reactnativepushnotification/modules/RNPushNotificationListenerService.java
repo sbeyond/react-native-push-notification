@@ -26,6 +26,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, final Bundle bundle) {
+        Log.v(LOG_TAG, "onMessageReceived was modified in order to receive smooch push notifictions");
         JSONObject data = getPushData(bundle.getString("data"));
         if (data != null) {
             if (!bundle.containsKey("message")) {
@@ -40,7 +41,11 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             if (!bundle.containsKey("color")) {
                 bundle.putString("color", data.optString("color", null));
             }
-
+            if (bundle.containsKey("smoochNotification")) {
+                Log.v(LOG_TAG, "onMessageReceived: " + bundle);
+                Log.d(LOG_TAG, "onMessageReceived: ignore smooch messages");
+                return;
+            }
             final int badge = data.optInt("badge", -1);
             if (badge >= 0) {
                 ApplicationBadgeHelper.INSTANCE.setApplicationIconBadgeNumber(this, badge);
